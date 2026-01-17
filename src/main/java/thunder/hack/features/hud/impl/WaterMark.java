@@ -54,8 +54,8 @@ public class WaterMark extends HudElement {
 
         if (mode.getValue() == Mode.Big) {
             Render2DEngine.drawHudBase(context.getMatrices(), getPosX(), getPosY(), 106, 30, HudEditor.hudRound.getValue());
-            FontRenderers.thglitch.drawString(context.getMatrices(), "EXPLOITCORE", getPosX() + 5.5, getPosY() + 5, -1);
-            FontRenderers.monsterrat.drawGradientString(context.getMatrices(), "EXPLOTICORE", getPosX() + 35.5f, getPosY() + 21f, 1);
+            FontRenderers.thglitch.drawString(context.getMatrices(), "AquildDLC", getPosX() + 5.5, getPosY() + 5, -1);
+            FontRenderers.monsterrat.drawGradientString(context.getMatrices(), "AquildDLC", getPosX() + 35.5f, getPosY() + 21f, 1);
             setBounds(getPosX(), getPosY(), 106, 30);
         } else if (mode.getValue() == Mode.Small) {
             if (HudEditor.hudStyle.is(HudEditor.HudStyle.Blurry)) {
@@ -63,14 +63,14 @@ public class WaterMark extends HudElement {
                 float offset2 = FontRenderers.sf_bold.getStringWidth((mc.isInSingleplayer() ? "SinglePlayer" : mc.getNetworkHandler().getServerInfo().address));
                 float offset3 = (Managers.PROXY.isActive() ? FontRenderers.sf_bold.getStringWidth(Managers.PROXY.getActiveProxy().getName()) + 11 : 0);
 
-                Render2DEngine.drawRoundedBlur(context.getMatrices(), getPosX(), getPosY(), 68f, 15f, 3, HudEditor.blurColor.getValue().getColorObject()); // Further increased width for Exploitcore
+                Render2DEngine.drawRoundedBlur(context.getMatrices(), getPosX(), getPosY(), 68f, 15f, 3, HudEditor.blurColor.getValue().getColorObject()); // Further increased width for AquildDLC
                 Render2DEngine.drawRoundedBlur(context.getMatrices(), getPosX() + 73, getPosY(), offset1 + offset2 - 36 + offset3, 15f, 3, HudEditor.blurColor.getValue().getColorObject());
 
                 Render2DEngine.setupRender();
 
                 Render2DEngine.drawRect(context.getMatrices(), getPosX() + 13, getPosY() + 1.5f, 0.5f, 11, new Color(0x44FFFFFF, true));
 
-                FontRenderers.sf_bold.drawGradientString(context.getMatrices(), "Exploitcore", getPosX() + 20, getPosY() + 5, 20);
+                FontRenderers.sf_bold.drawGradientString(context.getMatrices(), "AquildDLC", getPosX() + 20, getPosY() + 5, 20);
 
                 RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE);
                 RenderSystem.setShaderTexture(0, TextureStorage.miniLogo);
@@ -103,10 +103,10 @@ public class WaterMark extends HudElement {
                 setBounds(getPosX(), getPosY(), 100, 15f);
             } else {
                 String info = Formatting.DARK_GRAY + "| " + Formatting.RESET + username.trim() + Formatting.DARK_GRAY + " | " + Formatting.RESET + Managers.SERVER.getPing() + " ms" + Formatting.DARK_GRAY + " | " + Formatting.RESET + (mc.isInSingleplayer() ? "SinglePlayer" : mc.getNetworkHandler().getServerInfo().address);
-                float width = FontRenderers.sf_bold.getStringWidth("Exploticore " + info) + 5;
+                float width = FontRenderers.sf_bold.getStringWidth("AquildDLC " + info) + 5;
                 Render2DEngine.drawHudBase(context.getMatrices(), getPosX(), getPosY(), width, 10, 3);
-                FontRenderers.sf_bold.drawGradientString(context.getMatrices(), ru.getValue() ? textUtil + " " : "Exploticore ", getPosX() + 2, getPosY() + 2.5f, 10);
-                FontRenderers.sf_bold.drawString(context.getMatrices(), info, getPosX() + 2 + FontRenderers.sf_bold.getStringWidth("Exploticore "), getPosY() + 2.5f, HudEditor.textColor.getValue().getColor());
+                FontRenderers.sf_bold.drawGradientString(context.getMatrices(), ru.getValue() ? textUtil + " " : "AquildDLC ", getPosX() + 2, getPosY() + 2.5f, 10);
+                FontRenderers.sf_bold.drawString(context.getMatrices(), info, getPosX() + 2 + FontRenderers.sf_bold.getStringWidth("AquildDLC "), getPosY() + 2.5f, HudEditor.textColor.getValue().getColor());
                 setBounds(getPosX(), getPosY(), width, 10);
             }
 
@@ -122,7 +122,7 @@ public class WaterMark extends HudElement {
             context.getMatrices().pop();
             Render2DEngine.popWindow();
 
-            FontRenderers.thglitch.drawString(context.getMatrices(), "Exploticore", getPosX() + 43, getPosY() + 41.5, -1);
+            FontRenderers.thglitch.drawString(context.getMatrices(), "AquildDLC ", getPosX() + 43, getPosY() + 41.5, -1);
             setBounds(getPosX(), getPosY(), 100, 64);
         } else if (mode.is(Mode.Rifk)) {
             Date date = new Date(System.currentTimeMillis());
@@ -135,7 +135,7 @@ public class WaterMark extends HudElement {
             FontRenderers.profont.drawString(context.getMatrices(), info, getPosX() + 2.7, getPosY() + 2.953, HudEditor.textColor.getValue().getColor());
             setBounds(getPosX(), getPosY(), width, 8);
         } else {
-            FontRenderers.monsterrat.drawGradientString(context.getMatrices(), "Exploticore vdsc.gg/exploitcore", getPosX() + 5.5f, getPosY() + 5, 10);
+            FontRenderers.monsterrat.drawGradientString(context.getMatrices(), "nah we doesnt get dsc", getPosX() + 5.5f, getPosY() + 5, 10);
             setBounds(getPosX(), getPosY(), 100, 3);
         }
     }
