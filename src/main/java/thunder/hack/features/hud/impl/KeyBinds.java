@@ -17,92 +17,89 @@ import java.awt.*;
 import java.util.Objects;
 
 public class KeyBinds extends HudElement {
-    public final Setting<ColorSetting> oncolor = new Setting<>("OnColor", new ColorSetting(-1));
-    public final Setting<ColorSetting> offcolor = new Setting<>("OffColor", new ColorSetting(1));
+    public final Setting<ColorSetting> oncolor = new Setting<>("OnColor", new ColorSetting(new Color(255, 255, 255, 255).getRGB()));
+    public final Setting<ColorSetting> offcolor = new Setting<>("OffColor", new ColorSetting(new Color(200, 200, 200, 255).getRGB()));
     public final Setting<Boolean> onlyEnabled = new Setting<>("OnlyEnabled", false);
 
     public KeyBinds() {
         super("KeyBinds", 100, 100);
     }
 
-    private float vAnimation, hAnimation;
+    private float hAnimation;
 
+    @Override
     public void onRender2D(DrawContext context) {
         super.onRender2D(context);
 
-        int y_offset1 = 0;
-        float max_width = 50;
-        float maxBindWidth = 0;
+        float currentY = getPosY();
+        float targetWidth = 75; 
+        float headerHeight = 16f; 
+        float bindHeight = 13f;   
 
-        float pointerX = 0;
+        // 1. Obliczanie szerokości (szukamy najdłuższego rzędu)
         for (Module feature : Managers.MODULE.modules) {
             if (feature.isDisabled() && onlyEnabled.getValue()) continue;
             if (!Objects.equals(feature.getBind().getBind(), "None") && feature != ModuleManager.clickGui && feature != ModuleManager.thunderHackGui) {
-                if (y_offset1 == 0)
-                    y_offset1 += 4;
-
-                y_offset1 += 9;
-
-                float nameWidth = FontRenderers.sf_bold_mini.getStringWidth(feature.getName());
-                float bindWidth = FontRenderers.sf_bold_mini.getStringWidth(getShortKeyName(feature));
-
-                if (bindWidth > maxBindWidth)
-                    maxBindWidth = bindWidth;
-
-                if(nameWidth > pointerX)
-                    pointerX = nameWidth;
+                float totalW = FontRenderers.sf_bold_mini.getStringWidth(feature.getName() + getShortKeyName(feature)) + 22;
+                if (totalW > targetWidth) targetWidth = totalW;
             }
         }
 
-        float px = getPosX() + 10 + pointerX;
-        max_width = Math.max(20 + pointerX + maxBindWidth, 50);
+        hAnimation = AnimationUtility.fast(hAnimation, targetWidth, 15);
 
-        vAnimation = AnimationUtility.fast(vAnimation, 14 + y_offset1, 15);
-        hAnimation = AnimationUtility.fast(hAnimation, max_width, 15);
-
-        Render2DEngine.drawHudBase(context.getMatrices(), getPosX(), getPosY(), hAnimation, vAnimation, HudEditor.hudRound.getValue());
-
+        // 2. RENDEROWANIE NAGŁÓWKA "KeyBinds"
+        Render2DEngine.drawHudBase(context.getMatrices(), getPosX(), currentY, hAnimation, headerHeight, HudEditor.hudRound.getValue());
+        
+        // WYŚRODKOWANIE Y DLA NAGŁÓWKA (z poprawką +2.5f żeby nie był za wysoko)
+        float headerTextY = currentY + (headerHeight / 2f) - (FontRenderers.sf_bold.getFontHeight("KeyBinds") / 2f) + 2.5f;
+        
         if (HudEditor.hudStyle.is(HudEditor.HudStyle.Glowing)) {
-            FontRenderers.sf_bold.drawCenteredString(context.getMatrices(), "KeyBinds", getPosX() + hAnimation / 2, getPosY() + 4, HudEditor.textColor.getValue().getColorObject());
+            FontRenderers.sf_bold.drawString(context.getMatrices(), "KeyBinds", getPosX() + 6, headerTextY, 
+                HudEditor.textColor.getValue().getColorObject().getRGB());
         } else {
-            FontRenderers.sf_bold.drawGradientCenteredString(context.getMatrices(), "KeyBinds", getPosX() + hAnimation / 2, getPosY() + 4, 10);
+            FontRenderers.sf_bold.drawGradientString(context.getMatrices(), "KeyBinds", getPosX() + 6, headerTextY, 10);
         }
 
-        if (y_offset1 > 0) {
-            if (HudEditor.hudStyle.is(HudEditor.HudStyle.Blurry)) {
-                Render2DEngine.drawRectDumbWay(context.getMatrices(), getPosX() + 4, getPosY() + 13, getPosX() + getWidth() - 4, getPosY() + 13.5f, new Color(0x54FFFFFF, true));
-            } else {
-                Render2DEngine.horizontalGradient(context.getMatrices(), getPosX() + 2, getPosY() + 13.7f, getPosX() + 2 + hAnimation / 2f - 2, getPosY() + 14, Render2DEngine.injectAlpha(HudEditor.textColor.getValue().getColorObject(), 0), HudEditor.textColor.getValue().getColorObject());
-                Render2DEngine.horizontalGradient(context.getMatrices(), getPosX() + 2 + hAnimation / 2f - 2, getPosY() + 13.7f, getPosX() + 2 + hAnimation - 4, getPosY() + 14, HudEditor.textColor.getValue().getColorObject(), Render2DEngine.injectAlpha(HudEditor.textColor.getValue().getColorObject(), 0));
-            }
-        }
+        currentY += headerHeight + 2f;
 
-
-        Render2DEngine.addWindow(context.getMatrices(), getPosX(), getPosY(), getPosX() + hAnimation, getPosY() + vAnimation, 1f);
-        int y_offset = 0;
+        // 3. RENDEROWANIE BINDÓW (Osobne paski)
         for (Module feature : Managers.MODULE.modules) {
-            if (feature.isDisabled() && onlyEnabled.getValue())
-                continue;
+            if (feature.isDisabled() && onlyEnabled.getValue()) continue;
+
             if (!Objects.equals(feature.getBind().getBind(), "None") && feature != ModuleManager.clickGui && feature != ModuleManager.thunderHackGui) {
-                FontRenderers.sf_bold_mini.drawString(context.getMatrices(), feature.getName(), getPosX() + 5, getPosY() + 19 + y_offset, feature.isOn() ? oncolor.getValue().getColor() : offcolor.getValue().getColor());
-                FontRenderers.sf_bold_mini.drawCenteredString(context.getMatrices(),  getShortKeyName(feature),
+                String bindName = getShortKeyName(feature);
+                int color = feature.isOn() ? oncolor.getValue().getColor() : offcolor.getValue().getColor();
 
-                        px + (getPosX() + max_width - px) / 2f,
+                Render2DEngine.drawHudBase(context.getMatrices(), getPosX(), currentY, hAnimation, bindHeight, HudEditor.hudRound.getValue());
 
-                        getPosY() + 19 + y_offset, feature.isOn() ? oncolor.getValue().getColor() : offcolor.getValue().getColor());
-                Render2DEngine.drawRect(context.getMatrices(), px, getPosY() + 17 + y_offset, 0.5f, 8, new Color(0x44FFFFFF, true));
+                // --- KLUCZOWA POPRAWKA CENTROWANIA Y ---
+                // Dodajemy +2.7f offsetu, co przesunie tekst niżej, idealnie na środek czarnego paska
+                float textY = currentY + (bindHeight / 2f) - (9f / 2f) + 2.7f;
 
-                y_offset += 9;
+                // Nazwa (Lewo)
+                FontRenderers.sf_bold_mini.drawString(context.getMatrices(), feature.getName(), 
+                    getPosX() + 6, textY, color);
+
+                // Bind (Prawo)
+                float bindWidth = FontRenderers.sf_bold_mini.getStringWidth(bindName);
+                FontRenderers.sf_bold_mini.drawString(context.getMatrices(), bindName, 
+                    getPosX() + hAnimation - bindWidth - 6, textY, color);
+
+                currentY += bindHeight + 2f;
             }
         }
-        Render2DEngine.popWindow();
-        setBounds(getPosX(), getPosY(), hAnimation, vAnimation);
+
+        // Draggable
+        setWidth(hAnimation);
+        setHeight(currentY - getPosY());
+        setBounds(getPosX(), getPosY(), getWidth(), getHeight());
     }
 
     @NotNull
     public static String getShortKeyName(Module feature) {
         String sbind = feature.getBind().getBind();
-        return switch (feature.getBind().getBind()) {
+        if (sbind == null || sbind.equals("None")) return "NONE";
+        return switch (sbind) {
             case "LEFT_CONTROL" -> "LCtrl";
             case "RIGHT_CONTROL" -> "RCtrl";
             case "LEFT_SHIFT" -> "LShift";
